@@ -7,6 +7,7 @@ import qualified Data.Text as DT
 import qualified Data.List as DL
 import qualified Data.ByteArray as DBA
 import qualified Control.Exception as CE
+import qualified Server.Headers as SH
 
 run :: String -> IO ()
 run responseHandler = do
@@ -64,15 +65,5 @@ sendBytes sock content = let
 helloResponse :: String -> String
 helloResponse responseHandler = let
   c = responseHandler
-  l = contentLength c
-  in ((header l) ++ c)
-
-header :: String -> String
-header contentLength = "HTTP/1.1 200 OK!\n" ++ contentLength ++ "\nConnection: close\nContent-Type: text/plain; charset=utf-8\n\n"
-
-contentLength :: String -> String
-contentLength content = let
-  bs = encodeUtf8 (DT.pack content)
-  l = DBA.length bs
-  lengthStr = show l
-  in ("Content-Length: " ++ lengthStr)
+  l = SH.contentLength c
+  in ((SH.header l) ++ c)
