@@ -8,48 +8,45 @@ import qualified Data.List as DL
 import qualified Data.ByteArray as DBA
 import qualified Control.Exception as CE
 import qualified Server.Headers as SH
+import qualified Server.Handler as SHA
 
-run :: String -> IO ()
-run responseHandler = do
+run :: SHA.RequestHandler -> IO ()
+run requestHandler = do
     Prelude.putStrLn "server connection starting up"
     sock <- socket AF_INET Stream 0
     setSocketOption sock ReuseAddr 1
     setSocketOption sock RecvTimeOut 1000
     bind sock (SockAddrInet 8080 iNADDR_ANY)
     listen sock 2
-    mainLoop sock responseHandler
+    mainLoop sock requestHandler
 
-mainLoop :: Socket -> String -> IO ()
-mainLoop sock responseHandler = do
+mainLoop :: Socket -> SHA.RequestHandler -> IO ()
+mainLoop sock requestHandler = do
     conn <- accept sock
     readable <- isReadable sock
-    Prelude.putStrLn ("Is readable? " ++ (show readable))
-    runConn conn responseHandler
-    mainLoop sock responseHandler
+    runConn conn requestHandler
+    mainLoop sock requestHandler
 
 catchAny :: IO a -> (CE.IOException -> IO a) -> IO a
 catchAny = CE.catch
 
-runConn :: (Socket, SockAddr) -> String -> IO ()
-runConn (sock, address) responseHandler = do
+runConn :: (Socket, SockAddr) -> SHA.RequestHandler -> IO ()
+runConn (sock, address) requestHandler = do
     Prelude.putStrLn ("runConn " ++ (show address))
     received <- catchAny (receiveBytes sock 1) $ \e -> do
-      putStrLn ("Receive exception: " ++ (show e))
+      putStrLn ("Receive network exception: " ++ (show e))
       return ""
-    Prelude.putStrLn ("\n\nReceived: " ++ received)
-    sendBytes sock (helloResponse responseHandler)
+    Prelude.putStrLn ("\n" ++ received)
+    sendBytes sock (response received requestHandler)
     close sock
 
 receiveBytes :: Socket -> Int -> IO String
 receiveBytes socket n = do
-  Prelude.putStrLn ("Going in " ++ (show n))
   bytes <- NSB.recv socket 1024
-  Prelude.putStrLn ("done with " ++ (show n))
   let l = DBA.length bytes
   let lengthStr = show l
   let txt = decodeUtf8 bytes
   let str = DT.unpack txt
-  Prelude.putStrLn ("\n\nReceived: " ++ str)
   if (DL.isSuffixOf "\r\n" str) 
     then return str
     else do
@@ -62,8 +59,9 @@ sendBytes sock content = let
   bs = encodeUtf8 (DT.pack content)
   in (NSB.send sock bs)
 
-helloResponse :: String -> String
-helloResponse responseHandler = let
-  c = responseHandler
-  l = SH.contentLength c
-  in ((SH.header l) ++ c)
+response :: String -> SHA.RequestHandler -> String
+response rawRequest requestHandler = let
+    requestHeaders = SH.requestHeaders rawRequest
+    c = requestHandler requestHeaders
+    l = SH.contentLength c
+    in ((SH.responseHeaders l) ++ c)

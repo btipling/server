@@ -4,8 +4,11 @@ import qualified Data.ByteArray as DBA
 import Data.Text.Encoding(encodeUtf8)
 import qualified Data.Text as DT
 
-header :: String -> String
-header contentLength = "HTTP/1.1 200 OK!\n" ++ contentLength ++ "\nConnection: close\nContent-Type: text/plain; charset=utf-8\n\n"
+responseHeaders :: String -> String
+responseHeaders contentLength = "HTTP/1.1 200 OK!\n" ++ contentLength ++ "\nConnection: close\nContent-Type: text/plain; charset=utf-8\n\n"
+
+requestHeaders :: String -> [String]
+requestHeaders s = []
 
 contentLength :: String -> String
 contentLength content = let

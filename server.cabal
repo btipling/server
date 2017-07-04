@@ -25,3 +25,4 @@ executable server
                        memory >= 0.14
   other-modules:       Server.Connection 
                        Server.Headers
+                       Server.Handler
