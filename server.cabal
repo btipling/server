@@ -23,3 +23,4 @@ executable server
                        bytestring >= 0.10.8 && < 0.11,
                        text >= 1.2 && < 1.3,
                        memory >= 0.14
+  other-modules:       Server.Connection
