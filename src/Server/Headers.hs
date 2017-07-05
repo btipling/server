@@ -35,7 +35,7 @@ validateHeader index line | index == -1 = ("", "")
 parseHeaderAt :: Int -> String -> (String, String)
 parseHeaderAt i line = let
     header = take i line
-    value = drop i line
+    value = drop (i + 2) line
     in (header, value)
 
 contentLength :: String -> String

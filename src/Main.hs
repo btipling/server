@@ -9,4 +9,9 @@ main = do
   SC.run getResponse
   
 getResponse :: SH.RequestHandler
-getResponse headers = "𝒜 ☃\n"
+getResponse headers = let 
+  headersDescription = foldl concatonateHeaders "" headers
+  in ("𝒜 ☃\n" ++ headersDescription ++ "\n")
+
+concatonateHeaders :: String -> (String, String) -> String
+concatonateHeaders acc (headerName, headerValue) = acc ++ "\n" ++ headerName ++ ": " ++ headerValue
