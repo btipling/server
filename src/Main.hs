@@ -5,7 +5,7 @@ import qualified Server.Handler as SH
 
 main :: IO ()
 main = do
-  Prelude.putStrLn "server starting up"
+  Prelude.putStrLn "Application is starting."
   SC.run getResponse
   
 getResponse :: SH.RequestHandler

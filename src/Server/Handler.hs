@@ -1,3 +1,3 @@
 module Server.Handler where
 
-type RequestHandler = [String] -> String
+type RequestHandler = [(String, String)] -> String

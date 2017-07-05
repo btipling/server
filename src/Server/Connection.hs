@@ -12,7 +12,7 @@ import qualified Server.Handler as SHA
 
 run :: SHA.RequestHandler -> IO ()
 run requestHandler = do
-    Prelude.putStrLn "server connection starting up"
+    Prelude.putStrLn "Server connection starting up."
     sock <- socket AF_INET Stream 0
     setSocketOption sock ReuseAddr 1
     setSocketOption sock RecvTimeOut 1000
