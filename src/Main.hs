@@ -2,6 +2,8 @@ module Main where
 
 import qualified Server.Connection as SC
 import qualified Server.Handler as SH
+import qualified Data.Map.Strict as DM
+import Data.Map.Strict((!))
 
 main :: IO ()
 main = do
@@ -10,8 +12,10 @@ main = do
   
 getResponse :: SH.RequestHandler
 getResponse headers = let 
-  headersDescription = foldl concatonateHeaders "" headers
-  in ("𝒜 ☃\n" ++ headersDescription ++ "\n")
+  userAgent = getUserAgent headers
+  in ("𝒜 ☃ was visited by " ++ userAgent ++ "\n")
 
-concatonateHeaders :: String -> (String, String) -> String
-concatonateHeaders acc (headerName, headerValue) = acc ++ "\n" ++ headerName ++ ": " ++ headerValue
+getUserAgent :: DM.Map String String -> String
+getUserAgent headers = case (DM.member "User-Agent" headers) of 
+  False -> ""
+  True -> headers ! "User-Agent"

@@ -1,3 +1,5 @@
 module Server.Handler where
 
-type RequestHandler = [(String, String)] -> String
+import qualified Data.Map.Strict as DMS
+
+type RequestHandler = DMS.Map String String -> String

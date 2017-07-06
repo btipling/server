@@ -5,15 +5,20 @@ import Data.Text.Encoding(encodeUtf8)
 import qualified Data.Text as DT
 import qualified Data.List.Split as Split
 import qualified Data.List as DL
+import qualified Data.Map as DM
 
 responseHeaders :: String -> String
 responseHeaders contentLength = "HTTP/1.1 200 OK!\n" ++ contentLength ++ "\nConnection: close\nContent-Type: text/plain; charset=utf-8\n\n"
 
-requestHeaders :: String -> [(String, String)]
+requestHeaders :: String -> DM.Map String String
 requestHeaders s = let
         lines = tail (Split.splitOn "\r\n" s)
         filteredLines = filter isHeader lines
-    in(fmap parseHeader filteredLines)
+        headerPairs = fmap parseHeader filteredLines
+    in (mapHeaders headerPairs)
+
+mapHeaders :: [(String, String)] -> DM.Map String String
+mapHeaders headerPairs = DM.fromList headerPairs
 
 isHeader :: String -> Bool
 isHeader line = case (DL.elemIndex ':' line) of
