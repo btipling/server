@@ -34,7 +34,7 @@ runConn :: (Socket, SockAddr) -> SHA.RequestHandler -> IO ()
 runConn (sock, address) requestHandler = do
     Prelude.putStrLn ("runConn " ++ (show address))
     received <- catchAny (receiveBytes sock 1) $ \e -> do
-      putStrLn ("Receive network exception: " ++ (show e))
+      putStrLn ("Received network exception: " ++ (show e))
       return ""
     Prelude.putStrLn ("\n" ++ received)
     sendBytes sock (response received requestHandler)
