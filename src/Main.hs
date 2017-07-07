@@ -12,12 +12,12 @@ main = do
   
 getResponse :: Handler.RequestHandler
 getResponse headers = let 
-  userAgent = getUserAgent headers
-  content = "𝒜 ☃ was visited by " ++ userAgent ++ "!\n"
+  userAgent  = getUserAgent headers
+  content    = "𝒜 ☃ was visited by " ++ userAgent ++ "!\n"
   httpStatus = 200
   in (Handler.Response {
     Handler.content = content,
-    Handler.status = httpStatus
+    Handler.status  = httpStatus
   })
 
 getUserAgent :: DM.Map String String -> String
