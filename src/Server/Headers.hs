@@ -8,7 +8,7 @@ import qualified Data.List as DL
 import qualified Data.Map as DM
 
 responseHeaders :: String -> String
-responseHeaders contentLength = "HTTP/1.1 200 OK!\n" ++ contentLength ++ "\nConnection: close\nContent-Type: text/plain; charset=utf-8\n\n"
+responseHeaders content = (contentLength content) ++ "\nConnection: close\nContent-Type: text/plain; charset=utf-8\n\n"
 
 requestHeaders :: String -> DM.Map String String
 requestHeaders s = let

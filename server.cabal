@@ -28,3 +28,4 @@ executable server
   other-modules:       Server.Connection 
                        Server.Headers
                        Server.Handler
+                       Server.Http

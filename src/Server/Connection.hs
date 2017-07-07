@@ -7,10 +7,10 @@ import qualified Data.Text as DT
 import qualified Data.List as DL
 import qualified Data.ByteArray as DBA
 import qualified Control.Exception as CE
-import qualified Server.Headers as SH
-import qualified Server.Handler as SHA
+import qualified Server.Handler as Handler
+import qualified Server.Http as Http
 
-run :: SHA.RequestHandler -> IO ()
+run :: Handler.RequestHandler -> IO ()
 run requestHandler = do
     Prelude.putStrLn "Server connection starting up."
     sock <- socket AF_INET Stream 0
@@ -20,7 +20,7 @@ run requestHandler = do
     listen sock 2
     mainLoop sock requestHandler
 
-mainLoop :: Socket -> SHA.RequestHandler -> IO ()
+mainLoop :: Socket -> Handler.RequestHandler -> IO ()
 mainLoop sock requestHandler = do
     conn <- accept sock
     readable <- isReadable sock
@@ -30,14 +30,14 @@ mainLoop sock requestHandler = do
 catchAny :: IO a -> (CE.IOException -> IO a) -> IO a
 catchAny = CE.catch
 
-runConn :: (Socket, SockAddr) -> SHA.RequestHandler -> IO ()
+runConn :: (Socket, SockAddr) -> Handler.RequestHandler -> IO ()
 runConn (sock, address) requestHandler = do
     Prelude.putStrLn ("runConn " ++ (show address))
     received <- catchAny (receiveBytes sock 1) $ \e -> do
       putStrLn ("Received network exception: " ++ (show e))
       return ""
     Prelude.putStrLn ("\n" ++ received)
-    sendBytes sock (response received requestHandler)
+    sendBytes sock (Http.response received requestHandler)
     close sock
 
 receiveBytes :: Socket -> Int -> IO String
@@ -58,10 +58,3 @@ sendBytes:: Socket -> String -> IO Int
 sendBytes sock content = let
   bs = encodeUtf8 (DT.pack content)
   in (NSB.send sock bs)
-
-response :: String -> SHA.RequestHandler -> String
-response rawRequest requestHandler = let
-    requestHeaders = SH.requestHeaders rawRequest
-    c = requestHandler requestHeaders
-    l = SH.contentLength c
-    in ((SH.responseHeaders l) ++ c)

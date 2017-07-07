@@ -1,5 +1,10 @@
-module Server.Handler where
+module Server.Handler (HandlerResponse(Response), RequestHandler, content, status) where
 
 import qualified Data.Map.Strict as DMS
 
-type RequestHandler = DMS.Map String String -> String
+data HandlerResponse = Response { 
+    content :: String, 
+    status :: Int
+} deriving (Show)
+
+type RequestHandler = DMS.Map String String -> HandlerResponse
