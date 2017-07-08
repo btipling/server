@@ -10,14 +10,14 @@ import qualified Data.Map as Map
 responseHeaders :: String -> Map.Map String String
 responseHeaders content = Map.fromList [
     (contentLength content),
-    ("Connection", "close"),
+    ("Connection",   "close"),
     ("Content-Type", "text/plain; charset=utf-8")]
 
 requestHeaders :: String -> Map.Map String String
 requestHeaders s = let
-        lines         = tail (Split.splitOn "\r\n" s)
+        lines           = tail (Split.splitOn "\r\n" s)
         filtereListines = filter isHeader lines
-        headerPairs   = fmap parseHeader filtereListines
+        headerPairs     = fmap parseHeader filtereListines
     in (mapHeaders headerPairs)
 
 mapHeaders :: [(String, String)] -> Map.Map String String
