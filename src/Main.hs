@@ -9,7 +9,7 @@ import Data.Map.Strict((!))
 main :: IO ()
 main = do
   args <- Environment.getArgs
-  let path = head args
+  let path = if length args > 0 then head args else ""
   Prelude.putStrLn "Application is starting."
   Connection.run $ getResponse path
 
