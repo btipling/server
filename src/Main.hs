@@ -18,7 +18,7 @@ main = do
       Prelude.putStrLn "Application is starting."
       Connection.run $ getResponse path
     else do
-      Prelude.putStrLn $ path ++ " is either not a valid path or it doesn't exist."
+      Prelude.putStrLn $ "'" ++ path ++ "' is either not a valid path or it doesn't exist."
       Exit.exitWith $ Exit.ExitFailure 1
 
 getResponse :: String -> Handler.HttpRequest -> Handler.HandlerResponse
