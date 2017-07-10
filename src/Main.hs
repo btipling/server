@@ -17,7 +17,9 @@ main = do
     then do
       Prelude.putStrLn "Application is starting."
       Connection.run $ getResponse path
-    else Exit.exitWith $ Exit.ExitFailure 1
+    else do
+      Prelude.putStrLn $ path ++ " is either not a valid path or it doesn't exist."
+      Exit.exitWith $ Exit.ExitFailure 1
 
 getResponse :: String -> Handler.HttpRequest -> Handler.HandlerResponse
 getResponse path requestData = let

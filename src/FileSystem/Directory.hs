@@ -1,4 +1,7 @@
 module FileSystem.Directory (validate) where
 
+import System.Directory as Directory
+
 validate :: String -> IO Bool
-validate path = return True
+validate path = Directory.doesDirectoryExist path
+
