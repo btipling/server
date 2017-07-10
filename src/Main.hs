@@ -1,17 +1,23 @@
 module Main where
 
 import qualified System.Environment as Environment
+import qualified System.Exit as Exit
 import qualified Server.Connection as Connection
 import qualified Server.Handler as Handler
 import qualified Data.Map.Strict as Map
+import qualified FileSystem.Directory as Directory
 import Data.Map.Strict((!))
 
 main :: IO ()
 main = do
   args <- Environment.getArgs
   let path = if length args > 0 then head args else ""
-  Prelude.putStrLn "Application is starting."
-  Connection.run $ getResponse path
+  success <- Directory.validate path
+  if success
+    then do
+      Prelude.putStrLn "Application is starting."
+      Connection.run $ getResponse path
+    else Exit.exitWith $ Exit.ExitFailure 1
 
 getResponse :: String -> Handler.HttpRequest -> Handler.HandlerResponse
 getResponse path requestData = let

@@ -25,7 +25,8 @@ executable server
                        memory >= 0.14,
                        split >= 0.2,
                        ghc >= 8 && < 9
-  other-modules:       Server.Connection 
+  other-modules:       Server.Connection
                        Server.Headers
                        Server.Handler
                        Server.Http
+                       FileSystem.Directory
