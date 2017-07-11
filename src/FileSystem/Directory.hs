@@ -9,7 +9,7 @@ validate path = Directory.doesDirectoryExist path
 
 listContents :: String -> IO (Maybe String)
 listContents path = do
-    c <- Exception.try $ Directory.listDirectory path  :: IO (Either Exception.IOException [String])
+    c <- Exception.try $ Directory.listDirectory path :: IO (Either Exception.IOException [String])
     case c of
         Left _ -> return Nothing
         Right entries -> return (Just (foldl (\acc entry -> acc ++ " \n -> " ++ entry) "" entries))
