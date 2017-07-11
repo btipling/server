@@ -5,9 +5,9 @@ import Network.Socket.ByteString as ByteString
 import qualified Data.Text as Text
 import qualified Data.List as List
 import qualified Data.ByteArray as ByteArray
-import qualified Control.Exception as Exception
 import qualified Server.Handler as Handler
 import qualified Server.Http as Http
+import qualified Utils
 import Data.Text.Encoding(decodeUtf8, encodeUtf8)
 
 run :: Handler.RequestHandler -> IO ()
@@ -27,13 +27,10 @@ mainLoop sock requestHandler = do
     runConn conn requestHandler
     mainLoop sock requestHandler
 
-catchAny :: IO a -> (Exception.IOException -> IO a) -> IO a
-catchAny = Exception.catch
-
 runConn :: (Socket, SockAddr) -> Handler.RequestHandler -> IO ()
 runConn (sock, address) requestHandler = do
     Prelude.putStrLn ("runConn " ++ (show address))
-    received <- catchAny (receiveBytes sock 1) $ \e -> do
+    received <- Utils.catchAny (receiveBytes sock 1) $ \e -> do
       putStrLn ("Received network exception: " ++ (show e))
       return ""
     Prelude.putStrLn ("\n" ++ received)

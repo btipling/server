@@ -31,3 +31,4 @@ executable server
                        Server.Handler
                        Server.Http
                        FileSystem.Directory
+                       Utils
