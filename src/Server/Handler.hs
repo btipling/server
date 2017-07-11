@@ -29,4 +29,4 @@ data HttpRequest = Request {
     httpRequestPathList   :: [String]
 } deriving (Show)
 
-type RequestHandler = HttpRequest -> HandlerResponse
+type RequestHandler = HttpRequest -> IO HandlerResponse

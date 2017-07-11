@@ -21,15 +21,25 @@ main = do
       Prelude.putStrLn $ "'" ++ path ++ "' is either not a valid path or it doesn't exist."
       Exit.exitWith $ Exit.ExitFailure 1
 
-getResponse :: String -> Handler.HttpRequest -> Handler.HandlerResponse
-getResponse path requestData = let
-  userAgent  = getUserAgent $ Handler.httpRequestHeaders requestData
-  content    = "𝒜 ☃ was visited by " ++ (show requestData) ++ "!\n" ++ path
-  httpStatus = 200
-  in (Handler.Response {
-    Handler.content = content,
-    Handler.status  = httpStatus
-  })
+getResponse :: String -> Handler.HttpRequest -> IO Handler.HandlerResponse
+getResponse path requestData = do
+  let userAgent  = getUserAgent $ Handler.httpRequestHeaders requestData
+  result       <- Directory.listContents path
+  case result of
+    Nothing -> do
+      let httpStatus = 404
+      let content = "𝒜 ☃ says: \"Not found\""
+      return Handler.Response {
+        Handler.content = content,
+        Handler.status  = httpStatus
+      }
+    Just pathData -> do
+      let content    = "𝒜 ☃ was visited by " ++ (show requestData) ++ "!\n" ++ path ++ "\n" ++ pathData
+      let httpStatus = 200
+      return Handler.Response {
+        Handler.content = content,
+        Handler.status  = httpStatus
+      }
 
 getUserAgent :: Map.Map String String -> String
 getUserAgent headers = case (Map.member "User-Agent" headers) of

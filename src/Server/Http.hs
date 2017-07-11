@@ -10,18 +10,17 @@ data HttpMethod = UNSUPPORTED | GET | POST | HEAD deriving (Enum)
 status :: Int -> String
 status statusCode = "HTTP/1.1 " ++ (show statusCode) ++ "\r\n"
 
-response :: String -> Handler.RequestHandler -> String
+response :: String -> Handler.RequestHandler -> IO String
 response rawRequest requestHandler = if length rawRequest > 0
-    then let
-        httpRequestData          = parseRequestData rawRequest
-        handlerResponse          = requestHandler httpRequestData
-        content                  = Handler.content handlerResponse
-        httpStatus               = status $ Handler.status handlerResponse
-        responseHeaders          = Headers.responseHeaders content
-        formattedResponseHeaders = formatResponseHeaders responseHeaders
-        finalResponse            = httpStatus ++ formattedResponseHeaders ++ "\r\n" ++ content
-        in (finalResponse)
-    else ""
+    then do
+        let httpRequestData          = parseRequestData rawRequest
+        handlerResponse              <- requestHandler httpRequestData
+        let content                  = Handler.content handlerResponse
+        let httpStatus               = status $ Handler.status handlerResponse
+        let responseHeaders          = Headers.responseHeaders content
+        let formattedResponseHeaders = formatResponseHeaders responseHeaders
+        return (httpStatus ++ formattedResponseHeaders ++ "\r\n" ++ content)
+    else return ""
 
 parseRequestData :: String -> Handler.HttpRequest
 parseRequestData rawRequest = let

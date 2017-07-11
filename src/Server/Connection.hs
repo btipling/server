@@ -34,7 +34,8 @@ runConn (sock, address) requestHandler = do
       putStrLn ("Received network exception: " ++ (show e))
       return ""
     Prelude.putStrLn ("\n" ++ received)
-    sendBytes sock (Http.response received requestHandler)
+    response <- Http.response received requestHandler
+    sendBytes sock response
     close sock
 
 receiveBytes :: Socket -> Int -> IO String
