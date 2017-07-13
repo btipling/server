@@ -24,7 +24,7 @@ main = do
 getResponse :: String -> Handler.HttpRequest -> IO Handler.HandlerResponse
 getResponse path requestData = do
   let userAgent  = getUserAgent $ Handler.httpRequestHeaders requestData
-  result       <- Directory.listContents path
+  result <- Directory.getPathContents path $ Handler.httpRequestPathList requestData
   case result of
     Nothing -> do
       let httpStatus = 404

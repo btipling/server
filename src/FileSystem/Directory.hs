@@ -1,4 +1,4 @@
-module FileSystem.Directory (listContents, validate) where
+module FileSystem.Directory (getPathContents, listContents, validate) where
 
 import qualified System.Directory as Directory
 import qualified System.IO.Error as Error
@@ -11,5 +11,15 @@ listContents :: String -> IO (Maybe String)
 listContents path = do
     c <- Exception.try $ Directory.listDirectory path :: IO (Either Exception.IOException [String])
     case c of
-        Left _ -> return Nothing
+        Left _        -> return Nothing
         Right entries -> return (Just (foldl (\acc entry -> acc ++ " \n -> " ++ entry) "" entries))
+
+getPathContents :: String -> [String] -> IO (Maybe String)
+getPathContents rootPath pathList = let
+    pList = filter notEmpty pathList
+    in (case pList of
+         [] -> listContents rootPath
+         pList -> return $ Just "something")
+
+notEmpty :: String -> Bool
+notEmpty s = not $ null s
