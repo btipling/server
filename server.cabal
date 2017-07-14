@@ -31,5 +31,5 @@ executable server
                        Server.Headers
                        Server.Handler
                        Server.Http
-                       FileSystem.Directory
+                       FileSystem
                        Utils

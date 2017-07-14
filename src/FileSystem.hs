@@ -1,4 +1,4 @@
-module FileSystem.Directory (getPathContents, listContents, validate) where
+module FileSystem (getPathContents, listContents, validate) where
 
 import qualified System.Directory as Directory
 import qualified System.IO as IO

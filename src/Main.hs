@@ -5,14 +5,14 @@ import qualified System.Exit as Exit
 import qualified Server.Connection as Connection
 import qualified Server.Handler as Handler
 import qualified Data.Map.Strict as Map
-import qualified FileSystem.Directory as Directory
+import qualified FileSystem
 import Data.Map.Strict((!))
 
 main :: IO ()
 main = do
   args <- Environment.getArgs
   let path = if length args > 0 then head args else ""
-  success <- Directory.validate path
+  success <- FileSystem.validate path
   if success
     then do
       Prelude.putStrLn "Application is starting."
@@ -24,7 +24,7 @@ main = do
 getResponse :: String -> Handler.HttpRequest -> IO Handler.HandlerResponse
 getResponse path requestData = do
   let userAgent  = getUserAgent $ Handler.httpRequestHeaders requestData
-  result <- Directory.getPathContents path $ Handler.httpRequestPathList requestData
+  result <- FileSystem.getPathContents path $ Handler.httpRequestPathList requestData
   case result of
     Nothing -> do
       let httpStatus = 404
