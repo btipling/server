@@ -6,7 +6,9 @@ A work in progress and a project to learn and improve my Haskell knowledge.
 
 ## Progress
 
-Currently outputs directory contents:
+Currently outputs directory contents and file contents for a given path.
+
+**Security note:** don't use this program in an untrusted environment or run the application as a restricted user as this program does not prevent the reading of files outside of the working directory.
 
 ```
 stack build; stack exec server "C:\Users\swart\projects\haskell\server\"
