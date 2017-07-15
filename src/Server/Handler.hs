@@ -10,7 +10,8 @@ module Server.Handler (
     httpRequestHeaders,
     httpRequestQuery,
     httpRequestPathString,
-    httpRequestPathList) where
+    httpRequestPathList,
+    HttpHeadersMap) where
 
 import qualified Data.Map.Strict as Map
 
@@ -19,12 +20,14 @@ data HandlerResponse = Response {
     status  :: Int
 } deriving (Show)
 
+type HttpHeadersMap = Map.Map String String
+
 data HttpRequest = Request {
     httpRequestRaw        :: String,
     httpRequestContent    :: String,
     httpRequestMethod     :: Int,
-    httpRequestHeaders    :: Map.Map String String,
-    httpRequestQuery      :: Map.Map String String,
+    httpRequestHeaders    :: HttpHeadersMap,
+    httpRequestQuery      :: HttpHeadersMap,
     httpRequestPathString :: String,
     httpRequestPathList   :: [String]
 } deriving (Show)
