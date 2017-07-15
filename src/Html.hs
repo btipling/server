@@ -3,7 +3,6 @@ module Html (base, loadTemplate) where
 import qualified Data.List.Split as Split
 import qualified System.FilePath as FilePath
 import qualified FileSystem
-import qualified Debug.Trace
 
 replaceTemplateVar :: String -> String -> String -> String
 replaceTemplateVar template variableName content = let
@@ -21,4 +20,4 @@ loadTemplate templateName = do
     let seperator = [FilePath.pathSeparator]
     let templatePath = "templates" ++ seperator ++ templateName ++ ".html"
     filePath <- FileSystem.processPath templatePath
-    FileSystem.fileContents $ Debug.Trace.trace filePath filePath
+    FileSystem.fileContents filePath
