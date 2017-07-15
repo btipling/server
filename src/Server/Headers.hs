@@ -11,7 +11,7 @@ responseHeaders :: String -> Map.Map String String
 responseHeaders content = Map.fromList [
     (contentLength content),
     ("Connection",   "close"),
-    ("Content-Type", "text/plain; charset=utf-8")]
+    ("Content-Type", "text/html; charset=utf-8")]
 
 requestHeaders :: String -> Map.Map String String
 requestHeaders s = let

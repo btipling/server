@@ -1,4 +1,4 @@
-module FileSystem (getPathContents, listContents, validate) where
+module FileSystem (getPathContents, listContents, fileContents, processPath, validate) where
 
 import qualified System.Directory as Directory
 import qualified System.IO as IO
@@ -46,3 +46,8 @@ getPathContents' currentPath pathList = do
 
 notEmpty :: String -> Bool
 notEmpty s = not $ null s
+
+processPath :: String -> IO String
+processPath relativePath = do
+    currentDirectory <- Directory.getCurrentDirectory
+    return $ currentDirectory ++ [FilePath.pathSeparator] ++ relativePath

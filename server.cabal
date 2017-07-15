@@ -33,3 +33,4 @@ executable server
                        Server.Http
                        FileSystem
                        Utils
+                       Html

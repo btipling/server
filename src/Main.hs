@@ -6,23 +6,28 @@ import qualified Server.Connection as Connection
 import qualified Server.Handler as Handler
 import qualified Data.Map.Strict as Map
 import qualified FileSystem
+import qualified Html
 import Data.Map.Strict((!))
 
 main :: IO ()
 main = do
   args <- Environment.getArgs
-  let path = if length args > 0 then head args else ""
-  success <- FileSystem.validate path
-  if success
-    then do
-      Prelude.putStrLn "Application is starting."
-      Connection.run $ getResponse path
-    else do
-      Prelude.putStrLn $ "'" ++ path ++ "' is either not a valid path or it doesn't exist."
-      Exit.exitWith $ Exit.ExitFailure 1
+  c <- Html.loadTemplate "base"
+  case c of
+    Nothing           -> Prelude.putStrLn "Couldn't load base template."
+    Just baseTemplate -> do
+      let path = if length args > 0 then head args else ""
+      success <- FileSystem.validate path
+      if success
+        then do
+          Prelude.putStrLn "Application is starting."
+          Connection.run $ getResponse baseTemplate path
+        else do
+          Prelude.putStrLn $ "'" ++ path ++ "' is either not a valid path or it doesn't exist."
+          Exit.exitWith $ Exit.ExitFailure 1
 
-getResponse :: String -> Handler.HttpRequest -> IO Handler.HandlerResponse
-getResponse path requestData = do
+getResponse :: String -> String -> Handler.HttpRequest -> IO Handler.HandlerResponse
+getResponse baseTemplate path requestData = do
   let userAgent  = getUserAgent $ Handler.httpRequestHeaders requestData
   result <- FileSystem.getPathContents path $ Handler.httpRequestPathList requestData
   case result of
@@ -35,9 +40,10 @@ getResponse path requestData = do
       }
     Just pathData -> do
       let content    = "𝒜 ☃ was visited by " ++ (show requestData) ++ "!\n" ++ path ++ "\n" ++ pathData
+      let html = Html.base baseTemplate path content
       let httpStatus = 200
       return Handler.Response {
-        Handler.content = content,
+        Handler.content = html,
         Handler.status  = httpStatus
       }
 
