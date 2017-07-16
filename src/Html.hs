@@ -15,9 +15,10 @@ type IsDirectory = Bool
 
 data ServerTemplates = ServerTemplates {
     baseTemplate              :: Title -> Content -> HtmlOutput,
-    dirEntries                :: [(FileName, Path, IsDirectory)] -> HtmlOutput,
-    dirEntryTemplate          :: FileName -> Path -> IsDirectory -> HtmlOutput,
-    fileContentTemplate       :: Content -> HtmlOutput,
+    dirEntriesTemlate         :: Path -> [(FileName, IsDirectory)] -> HtmlOutput,
+    dirEntryTemplate          :: Path -> FileName -> HtmlOutput,
+    fileEntryTemplate         :: FileName -> HtmlOutput,
+    fileContentTemplate       :: Path -> Content -> HtmlOutput,
     requestTableTemplate      :: Handler.HttpHeadersMap -> HtmlOutput,
     requestTableEntryTemplate :: String -> String -> HtmlOutput
 }
@@ -32,6 +33,24 @@ base :: Template -> Title -> Content -> HtmlOutput
 base template title content = let
     templateWitTitleFilled = replaceTemplateVar template "title" title
     in (replaceTemplateVar templateWitTitleFilled "content" content)
+
+directoryEntries :: Template -> Path -> [(FileName, IsDirectory)] -> HtmlOutput
+directoryEntries template path entries = ""
+
+directoryEntry :: Template -> Path -> FileName -> HtmlOutput
+directoryEntry template path filename = ""
+
+fileEntry :: Template -> FileName -> HtmlOutput
+fileEntry template filename = ""
+
+fileContent :: Template -> Path -> Content -> HtmlOutput
+fileContent template path content = ""
+
+requestTable :: Template -> Handler.HttpHeadersMap -> HtmlOutput
+requestTable template headers = ""
+
+requestTableEntry :: Template -> String -> String -> HtmlOutput
+requestTableEntry template key value = ""
 
 loadTemplate :: String -> IO (Maybe String)
 loadTemplate templateName = do
