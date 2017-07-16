@@ -1,7 +1,9 @@
 module Html (base, loadTemplate) where
 
 import qualified Data.List.Split as Split
+import qualified Control.Monad as Monad
 import qualified Data.Map as Map
+import qualified Data.Maybe as Maybe
 import qualified System.FilePath as FilePath
 import qualified FileSystem
 import qualified Server.Handler as Handler
@@ -14,15 +16,7 @@ type FileName = String
 type Path = String
 type IsDirectory = Bool
 
-data ServerTemplates = ServerTemplates {
-    baseTemplate              :: Title -> Content -> HtmlOutput,
-    dirEntriesTemlate         :: Path -> [(FileName, IsDirectory)] -> HtmlOutput,
-    dirEntryTemplate          :: Path -> FileName -> HtmlOutput,
-    fileEntryTemplate         :: FileName -> HtmlOutput,
-    fileContentTemplate       :: Path -> Content -> HtmlOutput,
-    requestTableTemplate      :: Handler.HttpHeadersMap -> HtmlOutput,
-    requestTableEntryTemplate :: String -> String -> HtmlOutput
-}
+type ServerTemplates = Map.Map String String
 
 replaceTemplateVar :: Template -> (String, Content) -> HtmlOutput
 replaceTemplateVar template (variableName, content) = let
@@ -69,5 +63,25 @@ loadTemplate templateName = do
     filePath         <- FileSystem.processPath templatePath
     FileSystem.fileContents filePath
 
-loadTemplates :: IO (Maybe ServerTemplates)
-loadTemplates = return Nothing
+loadTemplates :: IO (Maybe [Maybe String])
+loadTemplates = do
+    loadedTemplates <- sequence $ fmap loadTemplate templates :: IO [Maybe String]
+    let isLegit = foldl loadedTemplate True loadedTemplates :: Bool
+    case isLegit of
+        True  -> return Nothing
+        False -> return $ Just loadedTemplates
+
+loadedTemplate :: Bool -> Maybe String -> Bool
+loadedTemplate prev t = case prev of
+        False  -> False
+        True -> Maybe.isNothing t
+
+templates :: [String]
+templates = [
+    "base",
+    "directoryEntries",
+    "directoryEntry",
+    "fileContent",
+    "fileEntry",
+    "headerTable",
+    "headerTableRow"]
