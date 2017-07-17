@@ -19,7 +19,7 @@ type ServerTemplates = Map.Map String String
 replaceTemplateVar :: Template -> (String, Content) -> HtmlOutput
 replaceTemplateVar template (variableName, content) = let
     variable = "{{" ++ variableName ++ "}}"
-    parts = Split.splitOn variable template
+    parts    = Split.splitOn variable template
     in ((head parts) ++ content ++ (last parts))
 
 fillTemplate :: Template -> [(String, Content)] ->HtmlOutput
@@ -58,8 +58,8 @@ loadTemplates = do
 
 loadedTemplate :: Bool -> Maybe String -> Bool
 loadedTemplate prev t = case prev of
-        False  -> False
-        True -> Maybe.isNothing t
+        False -> False
+        True  -> Maybe.isNothing t
 
 templates :: [String]
 templates = [

@@ -12,9 +12,9 @@ import Data.Map.Strict((!))
 main :: IO ()
 main = do
   args <- Environment.getArgs
-  c <- Html.loadTemplates
+  c    <- Html.loadTemplates
   case c of
-    Nothing           -> Prelude.putStrLn "Couldn't load base template."
+    Nothing        -> Prelude.putStrLn "Couldn't load base template."
     Just templates -> do
       let path = if length args > 0 then head args else ""
       success <- FileSystem.validate path
@@ -29,19 +29,19 @@ main = do
 getResponse :: Html.ServerTemplates -> String -> Handler.HttpRequest -> IO Handler.HandlerResponse
 getResponse templates path requestData = do
   let userAgent  = getUserAgent $ Handler.httpRequestHeaders requestData
-  result <- FileSystem.getPathContents path $ Handler.httpRequestPathList requestData
+  result         <- FileSystem.getPathContents path $ Handler.httpRequestPathList requestData
   case result of
     Nothing -> do
       let httpStatus = 404
-      let content = "𝒜 ☃ says: \"Not found\""
+      let content    = "𝒜 ☃ says: \"Not found\""
       return Handler.Response {
         Handler.content = content,
         Handler.status  = httpStatus
       }
     Just pathData -> do
       let content    = "𝒜 ☃ was visited by " ++ (show requestData) ++ "!\n" ++ path ++ "\n" ++ pathData
-      let t = templates ! "base"
-      let html = Html.fillTemplate t [("path", path), ("content", content)]
+      let t          = templates ! "base"
+      let html       = Html.fillTemplate t [("path", path), ("content", content)]
       let httpStatus = 200
       return Handler.Response {
         Handler.content = html,
