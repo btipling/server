@@ -12,22 +12,22 @@ import Data.Map.Strict((!))
 main :: IO ()
 main = do
   args <- Environment.getArgs
-  c <- Html.loadTemplate "base"
+  c <- Html.loadTemplates
   case c of
     Nothing           -> Prelude.putStrLn "Couldn't load base template."
-    Just baseTemplate -> do
+    Just templates -> do
       let path = if length args > 0 then head args else ""
       success <- FileSystem.validate path
       if success
         then do
           Prelude.putStrLn "Application is starting."
-          Connection.run $ getResponse baseTemplate path
+          Connection.run $ getResponse templates path
         else do
           Prelude.putStrLn $ "'" ++ path ++ "' is either not a valid path or it doesn't exist."
           Exit.exitWith $ Exit.ExitFailure 1
 
-getResponse :: String -> String -> Handler.HttpRequest -> IO Handler.HandlerResponse
-getResponse baseTemplate path requestData = do
+getResponse :: Html.ServerTemplates -> String -> Handler.HttpRequest -> IO Handler.HandlerResponse
+getResponse templates path requestData = do
   let userAgent  = getUserAgent $ Handler.httpRequestHeaders requestData
   result <- FileSystem.getPathContents path $ Handler.httpRequestPathList requestData
   case result of
@@ -40,7 +40,8 @@ getResponse baseTemplate path requestData = do
       }
     Just pathData -> do
       let content    = "𝒜 ☃ was visited by " ++ (show requestData) ++ "!\n" ++ path ++ "\n" ++ pathData
-      let html = Html.base baseTemplate path content
+      let t = templates ! "base"
+      let html = Html.fillTemplate t [("path", path), ("content", content)]
       let httpStatus = 200
       return Handler.Response {
         Handler.content = html,

@@ -1,4 +1,5 @@
 .history
+.vscode
 .stack-work
 *.exe
 *.stackdump
