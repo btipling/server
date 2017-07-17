@@ -1,4 +1,4 @@
-module Html (fillTemplate, loadTemplates, ServerTemplates) where
+module Html (directoryEntries, fillTemplate, headers, loadTemplates, ServerTemplates) where
 
 import qualified Data.List.Split as Split
 import qualified Control.Monad as Monad
@@ -25,20 +25,20 @@ replaceTemplateVar template (variableName, content) = let
 fillTemplate :: Template -> [(String, Content)] ->HtmlOutput
 fillTemplate t keyValues = foldl (\acc kv -> replaceTemplateVar acc kv) t keyValues
 
-directoryEntries :: Template -> Template -> Template -> Path -> [(FileName, IsDirectory)] -> HtmlOutput
-directoryEntries t dirTemplate fileTemplate path entries = let
+directoryEntries :: Template -> Template -> Path -> [FileName] -> HtmlOutput
+directoryEntries t dirTemplate path entries = let
     dt           = fillTemplate dirTemplate
-    ft           = fillTemplate fileTemplate
-    p            = ("path", path)
-    html         = fmap (\(name, isDir) -> if isDir then (dt [p, ("name", name)]) else (ft [("name", name)])) entries
+    p            = if (last path) == '/' then path else path ++ "/"
+    entryToHTML  = \name -> dt [("path", p ++ name), ("directoryName", name)]
+    html         = fmap entryToHTML entries
     listContents = foldl (++) "" html
     in (fillTemplate t [("path", path), ("listContents", listContents)])
 
 headers :: Template -> Template -> Handler.HttpHeadersMap -> HtmlOutput
 headers t entryTemplate headers = let
-    headerKeyValues = Map.toList headers :: [(String, String)]
+    entryValues = fmap (\(k, v) -> [("name", k), ("value", v)]) (Map.toList headers) :: [[(String, String)]]
     entryTemp       = fillTemplate entryTemplate
-    tableData       = foldl (\acc kv -> acc ++ (entryTemp [kv])) "" headerKeyValues
+    tableData       = foldl (\acc kv -> acc ++ (entryTemp kv)) "" entryValues
     in (fillTemplate t [("tableData", tableData)])
 
 loadTemplate :: String -> IO (Maybe String)
@@ -46,7 +46,11 @@ loadTemplate templateName = do
     let seperator    = [FilePath.pathSeparator]
     let templatePath = "templates" ++ seperator ++ templateName ++ ".html"
     filePath         <- FileSystem.processPath templatePath
-    FileSystem.fileContents filePath
+    c                <- FileSystem.fileContents filePath
+    case c of
+        Nothing -> return Nothing
+        Just (Left _) -> return Nothing
+        Just (Right contents) -> return $ Just contents
 
 loadTemplates :: IO (Maybe ServerTemplates)
 loadTemplates = do
@@ -67,6 +71,5 @@ templates = [
     "directoryEntries",
     "directoryEntry",
     "fileContent",
-    "fileEntry",
     "headerTable",
     "headerTableRow"]
