@@ -1,14 +1,14 @@
 module Main where
 
-import qualified System.Environment as Environment
-import qualified System.Exit as Exit
-import qualified Server.Connection as Connection
-import qualified Server.Handler as Handler
-import qualified Data.Map.Strict as Map
-import qualified Data.Either as Either
+import qualified Data.Either        as Either
+import           Data.Map.Strict    ((!))
+import qualified Data.Map.Strict    as Map
 import qualified FileSystem
 import qualified Html
-import Data.Map.Strict((!))
+import qualified Server.Connection  as Connection
+import qualified Server.Handler     as Handler
+import qualified System.Environment as Environment
+import qualified System.Exit        as Exit
 
 main :: IO ()
 main = do

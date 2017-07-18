@@ -1,9 +1,9 @@
 module Server.Http (response) where
 
-import qualified Server.Headers as Headers
-import qualified Server.Handler as Handler
-import qualified Data.Map as Map
 import qualified Data.List.Split as Split
+import qualified Data.Map        as Map
+import qualified Server.Handler  as Handler
+import qualified Server.Headers  as Headers
 
 data HttpMethod = UNSUPPORTED | GET | POST | HEAD deriving (Enum)
 

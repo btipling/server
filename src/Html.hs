@@ -1,12 +1,12 @@
 module Html (directoryEntries, fillTemplate, headers, loadTemplates, ServerTemplates) where
 
+import qualified Control.Monad   as Monad
 import qualified Data.List.Split as Split
-import qualified Control.Monad as Monad
-import qualified Data.Map as Map
-import qualified Data.Maybe as Maybe
-import qualified System.FilePath as FilePath
+import qualified Data.Map        as Map
+import qualified Data.Maybe      as Maybe
 import qualified FileSystem
-import qualified Server.Handler as Handler
+import qualified Server.Handler  as Handler
+import qualified System.FilePath as FilePath
 
 type Template = String
 type Content = String
@@ -48,8 +48,8 @@ loadTemplate templateName = do
     filePath         <- FileSystem.processPath templatePath
     c                <- FileSystem.fileContents filePath
     case c of
-        Nothing -> return Nothing
-        Just (Left _) -> return Nothing
+        Nothing               -> return Nothing
+        Just (Left _)         -> return Nothing
         Just (Right contents) -> return $ Just contents
 
 loadTemplates :: IO (Maybe ServerTemplates)

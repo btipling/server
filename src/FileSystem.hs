@@ -1,12 +1,12 @@
 module FileSystem (getPathContents, listContents, fileContents, processPath, validate) where
 
-import qualified System.Directory as Directory
-import qualified System.IO as IO
-import qualified System.IO.Error as Error
 import qualified Control.Exception as Exception
-import qualified Control.Monad as Monad
-import qualified Debug.Trace as Trace
-import qualified System.FilePath as FilePath
+import qualified Control.Monad     as Monad
+import qualified Debug.Trace       as Trace
+import qualified System.Directory  as Directory
+import qualified System.FilePath   as FilePath
+import qualified System.IO         as IO
+import qualified System.IO.Error   as Error
 
 validate :: String -> IO Bool
 validate path = Directory.doesDirectoryExist path

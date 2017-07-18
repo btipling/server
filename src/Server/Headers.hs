@@ -1,11 +1,11 @@
 module Server.Headers where
 
-import qualified Data.ByteArray as ByteArray
-import Data.Text.Encoding(encodeUtf8)
-import qualified Data.Text as Text
-import qualified Data.List.Split as Split
-import qualified Data.List as List
-import qualified Data.Map as Map
+import qualified Data.ByteArray     as ByteArray
+import qualified Data.List          as List
+import qualified Data.List.Split    as Split
+import qualified Data.Map           as Map
+import qualified Data.Text          as Text
+import           Data.Text.Encoding (encodeUtf8)
 
 responseHeaders :: String -> Map.Map String String
 responseHeaders content = Map.fromList [

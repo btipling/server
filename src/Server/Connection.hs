@@ -1,14 +1,14 @@
 module Server.Connection where
 
-import Network.Socket
-import Network.Socket.ByteString as ByteString
-import qualified Data.Text as Text
-import qualified Data.List as List
-import qualified Data.ByteArray as ByteArray
-import qualified Server.Handler as Handler
-import qualified Server.Http as Http
+import qualified Data.ByteArray            as ByteArray
+import qualified Data.List                 as List
+import qualified Data.Text                 as Text
+import           Data.Text.Encoding        (decodeUtf8, encodeUtf8)
+import           Network.Socket
+import           Network.Socket.ByteString as ByteString
+import qualified Server.Handler            as Handler
+import qualified Server.Http               as Http
 import qualified Utils
-import Data.Text.Encoding(decodeUtf8, encodeUtf8)
 
 run :: Handler.RequestHandler -> IO ()
 run requestHandler = do
